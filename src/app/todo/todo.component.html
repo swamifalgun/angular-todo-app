@@ -1,0 +1,100 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <!-- <app-todo></app-todo> -->
+            <div class="container header-container">
+                <div class="row">
+                    <div class="col header-column-left">
+                        <i class="fa fa-list"></i>
+                    </div>
+                    <div class="col header-column-center">
+                        <strong>Todo</strong>
+                    </div>
+                    <div class="col header-column-right">
+                        <i class="fa fa-clipboard"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group outer">
+                <input type="text" placeholder="Jot something down" class="form-control shadow-none" [(ngModel)]="title" (keyup.enter)="onKeyUp(title)" (ngModelChange)="onKeyPress($event)" />
+                <button (click)="onKeyUp(title)" class="fa fa-plus fa-2x create-icon" [style.background-color]="getColorClass(priority)"></button>
+            </div>
+            <div class="filter" *ngIf="showFilter">
+                <div class="container priority-container">
+                    <div class="row">
+                        <div class="col">
+                            <button class="high" value="high" (click)="onPrioritySelect($event)"><i class="fa fa-tag fa-xs filter-icon"></i>high</button>
+                        </div>
+                        <div class="col">
+                            <button class="medium" value="medium" (click)="onPrioritySelect($event)"><i class="fa fa-tag fa-xs filter-icon"></i>medium</button>
+                        </div>
+                        <div class="col">
+                            <button class="low" value="low" (click)="onPrioritySelect($event)"><i class="fa fa-tag fa-xs filter-icon"></i>low</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="container">
+                <div class="row info">
+                    <div class="col today">
+                        <div class="meta-today">
+                            <i class="fa fa-calendar fa-2x"></i><span class="meta-text">Today</span>
+                        </div>
+                        <span class="today-count count">{{countToday}}</span>
+                    </div>
+                    <div class="col scheduled">
+                        <div class="meta-scheduled">
+                            <i class="fa fa-clock-o fa-2x"></i><span class="meta-text">Older</span>
+                        </div>
+                        <span class="scheduled-count count">{{countOld}}</span>
+                    </div>
+                </div>
+                <div class="row info">
+                    <div class="col all">
+                        <div class="meta-all">
+                            <i class="fa fa-inbox fa-2x"></i><span class="meta-text">All</span>
+                        </div>
+                        <span class="all-count count">{{count}}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <hr style="background-color: black;" *ngIf="!showFilter">
+                <ul class="list-group" *ngIf="todos.length > 0; else noTodos">
+                    <li *ngFor="let todo of todos" class="list-group-item list-outer" [style.background-color]="getColorClass(todo.priority)" [style.text-decoration]="todo.isCompleted ? 'line-through' : 'none'" >
+                        <button class="fa"
+                        [ngClass]="{
+                            'fa-check check-icon icon': !todo.isCompleted,
+                            'fa-undo undo-icon icon': todo.isCompleted
+                        }"
+                        (click)="markComplete(todo)"></button>
+                        {{todo.title}}
+                        <i *ngIf="todo.isCompleted" class="fa fa-trash-o delete-icon icon" (click)="deleteTask(todo)"></i>
+                    </li>
+                </ul>
+            </div>
+            
+            <ng-template #noTodos>
+                <div class="jumbotron empty">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <h2 style="text-align: center;">Start adding tasks...</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+
+            
+
+
+
+
+
+        </div>
+    </div>
+</div>
+

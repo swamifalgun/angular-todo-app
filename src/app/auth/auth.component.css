@@ -1,0 +1,32 @@
+.heading {
+    text-align: center;
+}
+
+.input-field {
+    border: black 1px solid !important;
+    border-radius: 10px;
+    outline: none;
+    background: none;
+}
+
+.submit {
+    border: 1px solid black;
+    border-radius: 10px;
+    background: none;
+    color: black;
+}
+
+.button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.error {
+    text-align: center;
+    border: 1px solid rgb(233, 62, 62);
+    background-color: lightcoral;
+    border-radius: 10px;
+    padding: 2px 0 2px 0;
+    margin: 5px 0 8px 0;
+}
