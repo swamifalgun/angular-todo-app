@@ -1,6 +1,7 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, Query } from '@angular/core';
 import { TodoService } from '../shared/todoservice/todo.service';
 import { AngularFireDatabase } from 'angularfire2/database';
+
 @Component({
   selector: 'app-todo',
   templateUrl: './todo.component.html',
@@ -17,6 +18,7 @@ export class TodoComponent implements OnInit {
   count: number;
   countToday: number;
   countOld: number;
+  userId: string;
 
   getColorClass(priority: string) {
     let color;
@@ -38,7 +40,15 @@ export class TodoComponent implements OnInit {
 
   deleteTask(todo: any) {
     const index = this.todos.indexOf(todo);
-    this.todos.splice(index, 1);
+    
+    if(!localStorage.getItem('userId')) {
+      this.todos.splice(index, 1);
+    } else {
+
+
+      // delete from db here
+      this.service.deleteTodo(todo.id);
+    }
     this.count = this.todos.length;
   }
 
@@ -63,12 +73,18 @@ export class TodoComponent implements OnInit {
         title: this.title,
         priority: this.priority,
         isCompleted: false,
-        dateCreated: new Date()
+        dateCreated: new Date(),
+        userId: ''
       };
-
-      this.service.createTodo(todo)
+      if (!localStorage.getItem('userId')) {
+        this.todos.push(todo);
+      } else {
+        todo.userId = localStorage.getItem('userId');
+        this.service.createTodo(todo)
         .subscribe(res => {
         });
+      }
+
       this.title = '';
       this.showFilter = false;
       this.priority = '';
@@ -97,12 +113,17 @@ export class TodoComponent implements OnInit {
   }
 
   constructor(private service: TodoService, private db: AngularFireDatabase) {
+    if (!localStorage.getItem('userId')) {
+      this.todos = this.todos;
+    } else {
       this.db.list('/todos').valueChanges()
         .subscribe(todos => {
           this.todos = todos;
           this.createdToday(this.todos);
+          this.userId = this.service.userId;
           this.count = this.todos.length;
         });
+    }
   }
 
   ngOnInit() {

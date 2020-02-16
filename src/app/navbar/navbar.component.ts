@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../shared/authservice/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -12,5 +13,7 @@ export class NavbarComponent {
   toggleNavbar() {
     this.navbarOpen = !this.navbarOpen;
   }
+
+  constructor(public authService: AuthService) {}
 
 }

@@ -16,6 +16,21 @@
     color: black;
 }
 
+button.submit:hover {
+    background-color: #FF5959;
+}
+
+.switch {
+    border: 1px solid black;
+    border-radius: 10px;
+    background: none;
+    color: black;
+}
+
+button.switch:hover {
+    background-color: #51D266;
+}
+
 .button {
     display: flex;
     flex-direction: row;

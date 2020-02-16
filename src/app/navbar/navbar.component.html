@@ -13,11 +13,11 @@
        [ngClass]="{ 'show': navbarOpen }">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/login">SignUp</a>
+        <a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" routerLink="/login">SignUp</a>
       </li>
       
       <li class="nav-item">
-        <a class="nav-link" routerLink="/logout">Logout</a>
+        <a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" routerLink="/" (click)="authService.SignOut()">Logout</a>
       </li>
     </ul>
   </div>
