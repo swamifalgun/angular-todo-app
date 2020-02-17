@@ -40,22 +40,23 @@ export class TodoComponent implements OnInit {
 
   deleteTask(todo: any) {
     const index = this.todos.indexOf(todo);
-    
-    if(!localStorage.getItem('userId')) {
+    if (!localStorage.getItem('userId')) {
       this.todos.splice(index, 1);
     } else {
-
-
       // delete from db here
-      this.service.deleteTodo(todo.id);
+      this.service.deleteTodo(todo);
     }
     this.count = this.todos.length;
   }
 
-  markComplete(todo) {
+  markComplete(todo: any) {
     todo.isCompleted = !todo.isCompleted;
+    this.isComplete = todo.isCompleted;
     const index = this.todos.indexOf(todo);
     this.todos.push(this.todos.splice(index, 1)[0]);
+    if(localStorage.getItem('userId')) {
+      this.service.markComplete();
+    }
   }
 
   onKeyPress(title: string) {
