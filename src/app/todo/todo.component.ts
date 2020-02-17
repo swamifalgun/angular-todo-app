@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, EventEmitter, Output, Query } from '@angular/core';
 import { TodoService } from '../shared/todoservice/todo.service';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { AuthService } from '../shared/authservice/auth.service';
 
 @Component({
   selector: 'app-todo',
@@ -10,15 +11,17 @@ import { AngularFireDatabase } from 'angularfire2/database';
 
 export class TodoComponent implements OnInit {
 
-  todos = [];
+  todos: any[];
   title: string;
   showFilter: boolean;
-  isComplete: boolean;
+  //isComplete: boolean;
   priority: string;
   count: number;
   countToday: number;
   countOld: number;
   userId: string;
+  $key: string;
+  loggedIn: boolean;
 
   getColorClass(priority: string) {
     let color;
@@ -38,26 +41,28 @@ export class TodoComponent implements OnInit {
     return color;
   }
 
-  deleteTask(todo: any) {
-    const index = this.todos.indexOf(todo);
-    if (!localStorage.getItem('userId')) {
-      this.todos.splice(index, 1);
-    } else {
-      // delete from db here
-      this.service.deleteTodo(todo);
-    }
-    this.count = this.todos.length;
-  }
+  // // deleteTask(todo: any) {
+  // //   const index = this.todos.indexOf(todo);
+  // //   if (!localStorage.getItem('userId')) {
+  // //     this.todos.splice(index, 1);
+  // //   } else {
+  // //     // delete from db here
+  // //     this.service.deleteTodo();
+  // //   }
+  // //   this.count = this.todos.length;
+  // // }
 
-  markComplete(todo: any) {
-    todo.isCompleted = !todo.isCompleted;
-    this.isComplete = todo.isCompleted;
-    const index = this.todos.indexOf(todo);
-    this.todos.push(this.todos.splice(index, 1)[0]);
-    if(localStorage.getItem('userId')) {
-      this.service.markComplete();
-    }
-  }
+  // markComplete(todo, key, isCompleted) {
+  //   todo.isCompleted = !todo.isCompleted;
+  //   //this.isComplete = todo.isCompleted;
+
+  //   if(localStorage.getItem('userId')) {
+  //     this.service.markComplete(key, isCompleted);
+  //   } else {
+  //     const index = this.todos.indexOf(todo);
+  //     this.todos.push(this.todos.splice(index, 1)[0]);
+  //   }
+  // }
 
   onKeyPress(title: string) {
     if (title.length > 0) {
@@ -78,7 +83,9 @@ export class TodoComponent implements OnInit {
         userId: ''
       };
       if (!localStorage.getItem('userId')) {
-        this.todos.push(todo);
+        const todoArr = [];
+        todoArr.push(todo);
+        this.todos = todoArr;
       } else {
         todo.userId = localStorage.getItem('userId');
         this.service.createTodo(todo)
@@ -113,20 +120,26 @@ export class TodoComponent implements OnInit {
     this.priority = event.target.value;
   }
 
-  constructor(private service: TodoService, private db: AngularFireDatabase) {
+  constructor(public service: TodoService, private db: AngularFireDatabase, public authService: AuthService) {}
+
+  ngOnInit() {
     if (!localStorage.getItem('userId')) {
       this.todos = this.todos;
     } else {
-      this.db.list('/todos').valueChanges()
-        .subscribe(todos => {
-          this.todos = todos;
+      this.db.list('/todos').snapshotChanges()
+        .subscribe(todo => {
+          this.todos = [];
+          todo.forEach(e => {
+            const x = e.payload.toJSON();
+            const keyVar = '$key';
+            x[keyVar] = e.key;
+            this.todos.push(x);
+          });
+          //this.todos = todos;
           this.createdToday(this.todos);
           this.userId = this.service.userId;
           this.count = this.todos.length;
         });
     }
-  }
-
-  ngOnInit() {
   }
 }

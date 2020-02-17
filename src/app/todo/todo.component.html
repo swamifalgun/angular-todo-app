@@ -62,16 +62,16 @@
             
             <div>
                 <hr style="background-color: black;" *ngIf="!showFilter">
-                <ul class="list-group" *ngIf="todos.length > 0; else noTodos">
+                <ul class="list-group" *ngIf="todos; else noTodos">
                     <li *ngFor="let todo of todos" class="list-group-item list-outer" [style.background-color]="getColorClass(todo.priority)" [style.text-decoration]="todo.isCompleted ? 'line-through' : 'none'" >
                         <button class="fa"
                         [ngClass]="{
                             'fa-check check-icon icon': !todo.isCompleted,
                             'fa-undo undo-icon icon': todo.isCompleted
                         }"
-                        (click)="markComplete(todo)"></button>
+                        (click)="service.markComplete(todo.$key, todo.isCompleted)"></button>
                         {{todo.title}}
-                        <i *ngIf="todo.isCompleted" class="fa fa-trash-o delete-icon icon" (click)="deleteTask(todo)"></i>
+                        <i *ngIf="todo.isCompleted" class="fa fa-trash-o delete-icon icon" (click)="service.deleteTodo(todo.$key)"></i>
                     </li>
                 </ul>
             </div>
@@ -87,13 +87,6 @@
                     </div>
                 </div>
             </ng-template>
-
-            
-
-
-
-
-
         </div>
     </div>
 </div>

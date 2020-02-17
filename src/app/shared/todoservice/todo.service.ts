@@ -18,41 +18,23 @@ export class TodoService {
   key;
   completed: boolean;
 
+  todoList: AngularFireList<any>;
+
   constructor(private db: AngularFireDatabase, private http: Http, private firestore: AngularFirestore ) {}
 
-  deleteTodo(todo) {
-    //const todoList = this.db.list('todos').valueChanges();
-    this.db.database.ref('/todos').on('value', snapshot => {
-      const arr = snapshot.val();
-      if (arr) {
-        const arr2 = Object.keys(arr);
-        const key = arr2[0];
-        console.log(key);
-        this.key = key;
-      }
-    });
-    const todoRef = this.db.database.ref('todos/' + this.key);
-    todoRef.remove();
+
+  getTodos() {
+    this.todoList = this.db.list('todos');
+    return this.todoList;
   }
 
-  markComplete() {
-    this.db.database.ref('/todos').on('value', snapshot => {
-      const arr = snapshot.val();
-      if (arr) {
-        const arr2 = Object.keys(arr);
-        const key = arr2[0];
-        console.log(key);
-        this.key = key;
-      }
-    });
-    const todoRefUpdate = this.db.database.ref('todos/' + this.key);
-    todoRefUpdate.once('value').then(snapShot => {
-      const completed = snapShot.val().isCompleted;
-      console.log(completed);
-      this.completed = completed;
-      console.log(this.completed);
-    });
-    todoRefUpdate.update({isCompleted : !this.completed});
+  deleteTodo($key: string) {
+    this.db.object('/todos/' + $key).remove();
+  }
+
+  markComplete($key: string, flag: boolean) {
+    this.db.object('/todos/' + $key)
+      .update({isCompleted : !flag});
   }
 
   createTodo(todo) {
